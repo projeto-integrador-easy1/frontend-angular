@@ -1,0 +1,32 @@
+<section class="tela-gastos">
+  <div class="lista-gastos">
+    <div class="linha-gasto" *ngFor="let g of gastos; let i = index">
+      <div class="dados-gasto">
+        <div class="titulo-gasto">{{ g.nome }}</div>
+        <div class="descricao-gasto">{{ g.descricao }}</div>
+      </div>
+      <div class="acoes-gasto">
+        <div class="valor-gasto">R$ {{ g.valor.toFixed(2) }}</div>
+        <button class="botao-remover" (click)="removerGasto(i)">X</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="botao-adicionar" (click)="abrirModal()">+</button>
+
+  <div class="modal-fundo" *ngIf="mostrarModal">
+    <div class="modal-caixa">
+      <h3 class="titulo-modal">SAÍDA</h3>
+      <label class="label">NOME</label>
+      <input class="campo" [(ngModel)]="novoGasto.nome" />
+      <label class="label">DESCRIÇÃO</label>
+      <input class="campo" [(ngModel)]="novoGasto.descricao" />
+      <label class="label">VALOR</label>
+      <input class="campo" type="number" step="0.01" [(ngModel)]="novoGasto.valor" />
+      <div class="botoes-modal">
+        <button class="botao-criar" (click)="criarGasto()">CRIAR</button>
+        <button class="botao-fechar" (click)="fecharModal()">FECHAR</button>
+      </div>
+    </div>
+  </div>
+</section>
