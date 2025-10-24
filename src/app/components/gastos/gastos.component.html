@@ -14,19 +14,31 @@
 
   <button class="botao-adicionar" (click)="abrirModal()">+</button>
 
-  <div class="modal-fundo" *ngIf="mostrarModal">
+  <div class="modal-fundo" *ngIf="mostrarModal" role="dialog" aria-modal="true" aria-label="Criar novo gasto">
     <div class="modal-caixa">
-      <h3 class="titulo-modal">SAÍDA</h3>
-      <label class="label">NOME</label>
-      <input class="campo" [(ngModel)]="novoGasto.nome" />
-      <label class="label">DESCRIÇÃO</label>
-      <input class="campo" [(ngModel)]="novoGasto.descricao" />
-      <label class="label">VALOR</label>
-      <input class="campo" type="number" step="0.01" [(ngModel)]="novoGasto.valor" />
-      <div class="botoes-modal">
-        <button class="botao-criar" (click)="criarGasto()">CRIAR</button>
-        <button class="botao-fechar" (click)="fecharModal()">FECHAR</button>
-      </div>
+      <header class="modal-cabecalho">
+        <h3 class="titulo-modal">SAÍDA</h3>
+        <button class="fechar-modal" (click)="fecharModal()" aria-label="Fechar modal">&times;</button>
+      </header>
+
+      <form class="modal-corpo" (ngSubmit)="criarGasto()">
+        <label class="label">NOME</label>
+        <input class="campo" placeholder="Ex: Academia" [(ngModel)]="novoGasto.nome" name="nome" required />
+
+        <label class="label">DESCRIÇÃO</label>
+        <input class="campo" placeholder="Ex: Mensalidade" [(ngModel)]="novoGasto.descricao" name="descricao" />
+
+        <label class="label">VALOR</label>
+        <div class="campo-completo">
+          <span class="prefixo-moeda">R$</span>
+          <input class="campo campo-moeda" type="number" step="0.01" min="0" placeholder="0.00" [(ngModel)]="novoGasto.valor" name="valor" required />
+        </div>
+
+        <div class="botoes-modal">
+          <button type="submit" class="botao-criar">CRIAR</button>
+          <button type="button" class="botao-fechar" (click)="fecharModal()">CANCELAR</button>
+        </div>
+      </form>
     </div>
   </div>
 </section>
