@@ -3,45 +3,88 @@
   --verde-escuro:#3a4f4b;
   --fundo-cartao:#bfe9df;
   --branco:#ffffff;
-  --cinza-escuro:#264d49;
-  --sombra: rgba(0,0,0,0.18);
+  --texto-escuro:#264d49;
+  --sombra: rgba(0,0,0,0.12);
   --vermelho:#e24b4b;
 }
 
 .tela-gastos{
   background: transparent;
   min-height: calc(100vh - 76px);
-  padding:48px 60px;
+  padding:56px 60px;
   box-sizing:border-box;
-  color:var(--cinza-escuro);
+  color:var(--texto-escuro);
 }
 
-.lista-gastos{ max-width:900px; margin:0 auto 24px; }
+.lista-gastos{
+  max-width:1100px;
+  margin:0 auto 24px;
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+  align-items:center;
+}
 
 .linha-gasto{
+  width:760px;
+  max-width:95%;
   display:flex;
   justify-content:space-between;
   align-items:center;
-  background:var(--fundo-cartao);
-  padding:14px 18px;
-  margin-bottom:18px;
-  border-radius:4px;
-  box-shadow:0 6px 12px rgba(0,0,0,0.04);
+  background-color: #bfe9df;
+  padding:22px 28px;
+  border-radius:10px;
+  box-shadow:0 14px 30px rgba(0,0,0,0.06);
+  transition: transform .12s ease, box-shadow .12s ease;
+  border: 1px solid rgba(0,0,0,0.04);
 }
 
-.titulo-gasto{ font-weight:800; font-size:20px; letter-spacing:1px; }
-.descricao-gasto{ font-size:13px; color:#597469; margin-top:6px; }
-.acoes-gasto{ display:flex; align-items:center; gap:12px; }
-.valor-gasto{ font-weight:800; font-size:18px; }
+.linha-gasto:hover{
+  transform: translateY(-4px);
+  box-shadow:0 22px 48px rgba(0,0,0,0.08);
+}
+
+.dados-gasto{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.titulo-gasto{
+  font-weight:900;
+  font-size:22px;
+  letter-spacing:1px;
+  color:var(--verde-escuro);
+}
+
+.descricao-gasto{
+  font-size:14px;
+  color:rgba(38,77,73,0.55);
+  margin-top:2px;
+}
+
+.acoes-gasto{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.valor-gasto{
+  font-weight:900;
+  font-size:18px;
+  color:var(--texto-escuro);
+  margin-right:6px;
+}
 
 .botao-remover{
   background:var(--vermelho);
   color:var(--branco);
   border:0;
-  padding:6px 10px;
-  border-radius:3px;
-  font-weight:700;
+  padding:8px 10px;
+  border-radius:6px;
+  font-weight:800;
   cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.08);
 }
 
 .botao-adicionar{
@@ -50,14 +93,17 @@
   bottom:28px;
   width:64px;
   height:64px;
-  border-radius:6px;
+  border-radius:8px;
   border:3px solid var(--branco);
   background:var(--verde-escuro);
   color:var(--branco);
   font-size:34px;
   cursor:pointer;
-  box-shadow:0 6px 18px rgba(0,0,0,0.14);
+  box-shadow:0 8px 22px rgba(0,0,0,0.14);
 }
+
+
+/* Estilização do modal de adicionar gasto */
 
 .modal-fundo{
   position:fixed;
@@ -65,51 +111,70 @@
   display:flex;
   align-items:center;
   justify-content:center;
-  background: linear-gradient(rgba(0,0,0,0.28), rgba(0,0,0,0.28));
+  background: rgba(0,0,0,0.48);
   z-index:20000;
   backdrop-filter: blur(4px);
   padding:20px;
+  transition: background .18s ease, opacity .18s ease;
+  opacity:1;
 }
 
 .modal-caixa{
   width:460px;
   max-width:100%;
-  background: linear-gradient(180deg, #fff, #fafafa);
+  background-color: #bfe9df;
   border-radius:8px;
-  box-shadow: 0 18px 40px var(--sombra);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
   overflow:hidden;
   border:1px solid rgba(0,0,0,0.06);
+  color: var(--texto-escuro);
 }
 
 .modal-cabecalho{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:18px 20px;
-  background: linear-gradient(90deg, rgba(43,179,154,0.12), rgba(43,179,154,0.06));
+  padding:14px 18px;
+  background: transparent;
   border-bottom:1px solid rgba(0,0,0,0.04);
 }
 
-.titulo-modal{ margin:0; color:var(--verde-principal); font-size:22px; letter-spacing:2px; font-weight:800; }
+.titulo-modal{
+  margin:0;
+  color:var(--verde-escuro);
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:1px;
+}
 
 .fechar-modal{
   background:transparent;
   border:0;
-  font-size:26px;
+  font-size:22px;
   line-height:1;
   cursor:pointer;
-  color:rgba(0,0,0,0.5);
+  color:rgba(0,0,0,0.6);
   width:36px;
   height:36px;
   border-radius:6px;
 }
 
-.modal-corpo{ padding:18px 22px 26px; display:flex; flex-direction:column; gap:8px; }
+.modal-corpo{
+  padding:16px 18px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  background: transparent;
+}
 
-.label{ font-weight:800; font-size:12px; color:var(--verde-escuro); margin-top:6px; }
+.label{
+  font-weight:800;
+  font-size:12px;
+  color:var(--verde-escuro);
+  margin-top:6px;
+}
 
 .campo{
-  width:100%;
   padding:10px 12px;
   margin-top:6px;
   border:1px solid rgba(0,0,0,0.12);
@@ -119,18 +184,16 @@
   background:#fff;
 }
 
-.campo::placeholder{ color: rgba(0,0,0,0.32); }
-
 .campo:focus{
   border-color: var(--verde-principal);
-  box-shadow: 0 6px 18px rgba(43,179,154,0.12);
-  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(43,179,154,0.08);
+  transform: none;
 }
 
 .campo-completo{ display:flex; align-items:center; gap:8px; margin-top:6px; }
 .prefixo-moeda{
-  background:rgba(0,0,0,0.03);
-  padding:10px 12px;
+  background:transparent;
+  padding:8px 10px;
   border-radius:6px;
   color:var(--verde-escuro);
   font-weight:800;
@@ -138,32 +201,30 @@
 }
 .campo-moeda{ flex:1; }
 
-.botoes-modal{ display:flex; gap:12px; justify-content:center; margin-top:14px; }
+.botoes-modal{ display:flex; gap:12px; justify-content:center; margin-top:12px; }
 
 .botao-criar{
   background:var(--verde-principal);
   color:var(--branco);
   border:0;
-  padding:10px 26px;
+  padding:10px 22px;
   border-radius:8px;
   cursor:pointer;
   font-weight:800;
-  box-shadow:0 8px 20px rgba(43,179,154,0.14);
+  box-shadow:none;
 }
-.botao-criar:hover{ transform: translateY(-3px); box-shadow:0 18px 36px rgba(43,179,154,0.18); }
 
 .botao-fechar{
-  background:transparent;
+  background-color: #fff;
   border:1px solid rgba(0,0,0,0.08);
-  padding:10px 20px;
+  padding:10px 18px;
   border-radius:8px;
   cursor:pointer;
   font-weight:700;
 }
-.botao-fechar:hover{ background:rgba(0,0,0,0.03); }
 
-@media (max-width:520px){
-  .modal-caixa{ width:100%; border-radius:10px; }
-  .modal-corpo{ padding:14px; }
-  .titulo-modal{ font-size:20px; }
+@media (max-width:820px){
+  .linha-gasto{ width:92%; padding:18px; border-radius:8px; }
+  .titulo-gasto{ font-size:20px; }
+  .valor-gasto{ font-size:16px; }
 }
