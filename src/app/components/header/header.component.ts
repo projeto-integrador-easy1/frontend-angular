@@ -7,9 +7,12 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
+  rotaAtiva = 'geral';
+
   constructor(private router: Router) {}
 
   navegar(rota: string) {
+    this.rotaAtiva = rota;
     this.router.navigate([rota]);
   }
 }

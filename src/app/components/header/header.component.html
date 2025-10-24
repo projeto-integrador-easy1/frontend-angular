@@ -1,10 +1,10 @@
 <header class="cabecalho">
   <div class="marca">EASY</div>
   <nav class="menu-superior">
-    <button class="botao-aba ativo" (click)="navegar('geral')">Geral</button>
-    <button class="botao-aba" (click)="navegar('saldo')">Saldo</button>
-    <button class="botao-aba" (click)="navegar('gastos')">Gastos</button>
-    <button class="botao-aba" (click)="navegar('investimentos')">Investimentos</button>
-    <button class="botao-aba" (click)="navegar('calendario')">Calendário</button>
+    <button class="botao-aba" [class.ativo]="rotaAtiva === 'geral'" (click)="navegar('geral')">Geral</button>
+    <button class="botao-aba" [class.ativo]="rotaAtiva === 'saldo'" (click)="navegar('saldo')">Saldo</button>
+    <button class="botao-aba" [class.ativo]="rotaAtiva === 'gastos'" (click)="navegar('gastos')">Gastos</button>
+    <button class="botao-aba" [class.ativo]="rotaAtiva === 'investimentos'" (click)="navegar('investimentos')">Investimentos</button>
+    <button class="botao-aba" [class.ativo]="rotaAtiva === 'calendario'" (click)="navegar('calendario')">Calendário</button>
   </nav>
 </header>
