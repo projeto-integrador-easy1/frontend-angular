@@ -15,8 +15,8 @@ export class GeralComponent implements OnInit {
 
   ngOnInit(): void {
     const b = this.balance.getBalance();
-    this.entrada = b.entrada;
-    this.saida = b.saida;
+    this.entrada = Number(b.entrada) || 0;
+    this.saida = Number(b.saida) || 0;
     this.saldo = this.entrada - this.saida;
   }
 }

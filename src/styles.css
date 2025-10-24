@@ -1,5 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
-html,body{
-  margin:0;
+:root{
+  --verde-principal: #2bb39a;
+  --verde-escuro: #3a4f4b;
+  --fundo-claro-cartao: #bfe9df;
+  --muted: #cfeee6;
+  --branco: #ffffff;
+  --texto-escuro: #264d49;
+  --vermelho: #e24b4b;
+  --sombra: rgba(0,0,0,0.12);
+}
+
+html, body {
+  margin: 0;
+  height: 100%;
   font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--verde-principal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

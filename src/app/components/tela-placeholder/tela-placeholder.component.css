@@ -6,14 +6,14 @@
 }
 
 .tela{
-  background: var(--teal);
+  background: transparent;
   min-height: calc(100vh - 76px);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   padding: 48px 24px;
   box-sizing: border-box;
-  color: var(--teal-escuro);
+  color: var(--texto-escuro);
 }
 
 .caixa{
@@ -23,7 +23,7 @@
   padding: 16px 20px;
   box-sizing: border-box;
   border-radius: 6px;
-  box-shadow: 0 8px 20px var(--sombra);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
 .titulo{
@@ -31,7 +31,6 @@
   color: var(--branco);
   font-size: 20px;
   font-weight: 800;
-  letter-spacing: 1px;
 }
 
 .botoes{
@@ -42,7 +41,7 @@
 
 .botao{
   background: var(--branco);
-  color: var(--teal-escuro);
+  color: var(--verde-escuro);
   border: 0;
   padding: 10px 18px;
   font-weight: 700;

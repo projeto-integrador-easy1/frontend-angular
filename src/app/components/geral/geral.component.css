@@ -13,6 +13,14 @@
   color:#264d49;
 }
 
+.tela-geral{
+  background: transparent;
+  min-height: calc(100vh - 76px);
+  padding:56px 40px;
+  box-sizing:border-box;
+  color:var(--texto-escuro, #264d49);
+}
+
 .cards-row{
   display:flex;
   gap:40px;
@@ -21,66 +29,86 @@
   flex-wrap:wrap;
 }
 
-.card{
+.container-cartoes{
+  max-width:1100px;
+  margin:0 auto;
+}
+
+.linha-cartoes{
+  display:flex;
+  gap:40px;
+  justify-content:center;
+  align-items:flex-start;
+  flex-wrap:wrap;
+}
+
+.cartao{
   width:360px;
-  background: transparent;
-  border-radius:4px;
-  overflow:hidden;
-  box-shadow: 0 2px 0 rgba(0,0,0,0.06);
-}
-
-.card-title{
-  background:#3a4f4b;
-  color:#fff;
-  text-align:center;
-  padding:12px 0;
-  font-size:22px;
-  font-weight:700;
-}
-
-.card-body{
-  background: var(--card-bg);
-  padding:28px 18px;
-  text-align:center;
-}
-
-.amount{
-  font-size:28px;
-  font-weight:800;
-  margin-bottom:12px;
-}
-
-.action{
-  color:#597469;
-  font-weight:600;
-  letter-spacing:0.6px;
-}
-
-.saldo-card{
-  width:520px;
-  margin:56px auto 0;
   border-radius:6px;
   overflow:hidden;
-  box-shadow:0 6px 18px rgba(0,0,0,0.08);
+  box-shadow:0 8px 20px rgba(0,0,0,0.06);
+  background:transparent;
 }
 
-.saldo-card .card-title{
-  background:#3a4f4b;
-  color:#fff;
+.cartao-titulo{
+  background:var(--verde-escuro, #3a4f4b);
+  color:var(--branco, #fff);
   text-align:center;
-  padding:18px 0;
-  font-size:28px;
+  padding:14px 0;
+  font-size:20px;
   font-weight:800;
 }
 
-.saldo-body{
-  background:var(--card-bg);
+.cartao-corpo{
+  background:var(--fundo-claro-cartao, #bfe9df);
+  padding:28px 20px;
+  text-align:center;
+}
+
+.valor{
+  font-size:34px;
+  font-weight:900;
+  margin-bottom:8px;
+  color:var(--texto-escuro, #264d49);
+}
+
+.acao{
+  color:#597469;
+  font-weight:700;
+  letter-spacing:0.6px;
+  margin-top:6px;
+}
+
+.cartao-saldo{
+  width:520px;
+  margin:48px auto 0;
+  border-radius:6px;
+  overflow:hidden;
+  box-shadow:0 10px 26px rgba(0,0,0,0.08);
+}
+
+.cartao-saldo .cartao-titulo{
+  padding:18px 0;
+  font-size:24px;
+  font-weight:800;
+}
+
+.saldo-corpo{
+  background:var(--fundo-claro-cartao, #bfe9df);
   padding:28px 24px;
   text-align:center;
 }
 
-.saldo-amount{
-  font-size:34px;
+.valor-saldo{
+  font-size:32px;
   font-weight:900;
-  color:#264d49;
+  color:var(--texto-escuro, #264d49);
+}
+
+/* responsividade */
+@media (max-width:900px){
+  .linha-cartoes{ gap:20px; }
+  .cartao{ width:100%; max-width:420px; }
+  .cartao-saldo{ width:100%; max-width:720px; margin-top:28px; }
+  .container-cartoes{ padding:0 12px; }
 }
