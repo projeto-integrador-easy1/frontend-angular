@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { NavigationService } from '../../services/navigation.service';
 
 @Component({
   selector: 'app-header',
@@ -7,12 +8,18 @@ import { Router } from '@angular/router';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  rotaAtiva = 'geral';
+  
+  constructor(
+    private router: Router,
+    public navigationService: NavigationService
+  ) {}
 
-  constructor(private router: Router) {}
+  get rotaAtiva() {
+    return this.navigationService.rotaAtiva;
+  }
 
   navegar(rota: string) {
-    this.rotaAtiva = rota;
+    this.navigationService.setRotaAtiva(rota);
     this.router.navigate([rota]);
   }
 }
