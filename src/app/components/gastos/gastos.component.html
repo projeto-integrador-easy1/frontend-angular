@@ -1,12 +1,17 @@
 <section class="tela-gastos">
+  <div class="estado-vazio" *ngIf="movimentos.length === 0">
+    Você ainda não possui nenhum gasto cadastrado em nosso sistema.
+    <a href="#" (click)="$event.preventDefault(); abrirModal()">Criar aqui</a>
+  </div>
+
   <div class="lista-gastos">
-    <div class="linha-gasto" *ngFor="let g of gastos; let i = index">
+    <div class="linha-gasto" *ngFor="let g of movimentos; let i = index">
       <div class="dados-gasto">
         <div class="titulo-gasto">{{ g.nome }}</div>
         <div class="descricao-gasto">{{ g.descricao }}</div>
       </div>
       <div class="acoes-gasto">
-        <div class="valor-gasto">R$ {{ g.valor.toFixed(2) }}</div>
+        <div class="valor-gasto" [style.color]="g.tipo === 'entrada' ? '#2bb39a' : '#e24b4b'">{{ g.tipo === 'entrada' ? '+' : '-' }} R$ {{ g.valor.toFixed(2) }}</div>
         <button class="botao-remover" (click)="removerGasto(i)">X</button>
       </div>
     </div>
@@ -17,11 +22,17 @@
   <div class="modal-fundo" *ngIf="mostrarModal" role="dialog" aria-modal="true" aria-label="Criar novo gasto">
     <div class="modal-caixa">
       <header class="modal-cabecalho">
-        <h3 class="titulo-modal">SAÍDA</h3>
+        <h3 class="titulo-modal">NOVO MOVIMENTO</h3>
         <button class="fechar-modal" (click)="fecharModal()" aria-label="Fechar modal">&times;</button>
       </header>
 
       <form class="modal-corpo" (ngSubmit)="criarGasto()">
+        <label class="label">TIPO</label>
+        <select class="campo" [(ngModel)]="novoGasto.tipo" name="tipo">
+          <option value="gasto">Gasto (saída)</option>
+          <option value="entrada">Entrada</option>
+        </select>
+
         <label class="label">NOME</label>
         <input class="campo" placeholder="Ex: Academia" [(ngModel)]="novoGasto.nome" name="nome" required />
 
