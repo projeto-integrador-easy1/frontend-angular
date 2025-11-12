@@ -12,13 +12,15 @@
       </div>
       <div class="acoes-gasto">
         <div class="valor-gasto" [style.color]="g.tipo === 'entrada' ? '#2bb39a' : '#e24b4b'">{{ g.tipo === 'entrada' ? '+' : '-' }} R$ {{ g.valor.toFixed(2) }}</div>
-        <button class="botao-remover" (click)="removerGasto(i)">X</button>
+        <button class="botao-remover" (click)="removerTransacao(i)">X</button>
       </div>
     </div>
   </div>
 
   <button class="botao-adicionar" (click)="abrirModal()">+</button>
 
+  <!-- modal de criação de gasto -->
+   
   <div class="modal-fundo" *ngIf="mostrarModal" role="dialog" aria-modal="true" aria-label="Criar novo gasto">
     <div class="modal-caixa">
       <header class="modal-cabecalho">
@@ -26,27 +28,36 @@
         <button class="fechar-modal" (click)="fecharModal()" aria-label="Fechar modal">&times;</button>
       </header>
 
-      <form class="modal-corpo" (ngSubmit)="criarGasto()">
+      <form class="modal-corpo" [formGroup]="formTransacao" (ngSubmit)="criarTransacao()">
         <label class="label">TIPO</label>
-        <select class="campo" [(ngModel)]="novoGasto.tipo" name="tipo">
+        <select class="campo" formControlName="tipo">
           <option value="gasto">Gasto (saída)</option>
           <option value="entrada">Entrada</option>
         </select>
+        <div *ngIf="formTransacao.get('tipo')?.invalid && formTransacao.get('tipo')?.touched">
+          <small>Tipo é obrigatório.</small>
+        </div>
 
         <label class="label">NOME</label>
-        <input class="campo" placeholder="Ex: Academia" [(ngModel)]="novoGasto.nome" name="nome" required />
+        <input class="campo" placeholder="Ex: Academia" formControlName="nome" />
+        <div *ngIf="formTransacao.get('nome')?.invalid && formTransacao.get('nome')?.touched">
+          <small>Nome é obrigatório (mínimo 3 caracteres).</small>
+        </div>
 
         <label class="label">DESCRIÇÃO</label>
-        <input class="campo" placeholder="Ex: Mensalidade" [(ngModel)]="novoGasto.descricao" name="descricao" />
+        <input class="campo" placeholder="Ex: Mensalidade" formControlName="descricao" />
 
         <label class="label">VALOR</label>
         <div class="campo-completo">
           <span class="prefixo-moeda">R$</span>
-          <input class="campo campo-moeda" type="number" step="0.01" min="0" placeholder="0.00" [(ngModel)]="novoGasto.valor" name="valor" required />
+          <input class="campo campo-moeda" type="number" step="0.01" min="0" placeholder="0.00" formControlName="valor" />
+        </div>
+        <div *ngIf="formTransacao.get('valor')?.invalid && formTransacao.get('valor')?.touched">
+          <small>Valor é obrigatório (mínimo R$ 0,01).</small>
         </div>
 
         <div class="botoes-modal">
-          <button type="submit" class="botao-criar">CRIAR</button>
+          <button type="submit" class="botao-criar" [disabled]="formTransacao.invalid">CRIAR</button>
           <button type="button" class="botao-fechar" (click)="fecharModal()">CANCELAR</button>
         </div>
       </form>
