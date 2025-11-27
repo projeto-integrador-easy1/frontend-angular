@@ -10,7 +10,6 @@ export class UsuarioService {
 
   constructor(private http: HttpClient) {}
 
-  // Retorna Observable de array de usuários com fallback para []
   getUsuarios(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.apiUrl).pipe(catchError(() => of([])));
   }

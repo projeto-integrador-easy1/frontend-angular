@@ -29,12 +29,4 @@
       </div>
     </div>
   </div>
-
-  <div class="lista-usuarios">
-    <h2>Lista de Usuários</h2>
-    <ul>
-      <!-- consumir Observable diretamente com async pipe -->
-      <li *ngFor="let usuario of usuarios$ | async">{{ usuario.nome }} - {{ usuario.email }}</li>
-    </ul>
-  </div>
 </section>

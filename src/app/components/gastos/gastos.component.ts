@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BalanceService } from '../../services/balance.service';
+import { Transacao, TipoTransacao } from '../../models/transacao.model';
+import { TransacaoService } from '../../services/transacao.service';
 
 @Component({
   standalone: true,
@@ -11,94 +13,109 @@ import { BalanceService } from '../../services/balance.service';
   styleUrls: ['./gastos.component.css']
 })
 export class GastosComponent implements OnInit {
-  private readonly STORAGE_KEY = 'movimentos';
-  movimentos: Array<{ tipo: 'gasto' | 'entrada'; nome: string; descricao: string; valor: number }> = [];
+  movimentos: Transacao[] = [];
   mostrarModal = false;
   formTransacao!: FormGroup;
 
   constructor(
     private balance: BalanceService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private transacaoService: TransacaoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.inicializarFormulario();
+    this.carregarTransacoes();
+  }
+
+  abrirModal(): void {
+    this.inicializarFormulario();
+    this.mostrarModal = true;
+  }
+
+  fecharModal(): void {
+    this.mostrarModal = false;
+  }
+
+  inicializarFormulario(): void {
+    const dataAtual = new Date().toISOString().split('T')[0];
     this.formTransacao = this.fb.group({
       tipo: ['gasto', Validators.required],
       nome: ['', [Validators.required, Validators.minLength(3)]],
       descricao: [''],
-      valor: [null, [Validators.required, Validators.min(0.01)]]
+      valor: [null, [Validators.required, Validators.min(0.01)]],
+      data: [dataAtual, Validators.required]
     });
-
-    this.movimentos = this.loadMovimentos();
-    this.balance.setEntrada(this.totalEntradas());
-    this.balance.setSaida(this.totalSaidas());
-  }
-
-  abrirModal() {
-    this.formTransacao.reset({ tipo: 'gasto', nome: '', descricao: '', valor: null });
-    this.mostrarModal = true;
-  }
-
-  fecharModal() {
-    this.mostrarModal = false;
   }
 
   criarTransacao(): void {
-    if (this.formTransacao.valid) {
-      const dados = this.formTransacao.value;
-      const transacao = {
-        tipo: dados.tipo,
-        nome: dados.nome.toUpperCase(),
-        descricao: dados.descricao,
-        valor: Number(dados.valor)
-      };
-
-      console.log('Transação salva:', transacao);
-
-      // Aqui você pode enviar os dados para um serviço HTTP, por exemplo:
-      // this.transacaoService.salvar(transacao).subscribe(...)
-
-      this.movimentos.unshift(transacao);
-      this.atualizarBalance();
-      this.fecharModal();
-    } else {
-      console.log('Formulário inválido');
+    if (this.formTransacao.invalid) {
+      return;
     }
+
+    const transacao = this.montarTransacao();
+
+    this.transacaoService.criarTransacao(transacao).subscribe({
+      next: () => {
+        this.mostrarModal = false;
+        this.carregarTransacoes();
+      },
+      error: () => {}
+    });
   }
 
-  removerTransacao(index: number) {
-    this.movimentos.splice(index, 1);
-    this.atualizarBalance();
+  removerTransacao(index: number): void {
+    const transacao = this.movimentos[index];
+    if (!transacao.id) {
+      return;
+    }
+
+    this.transacaoService.deletarTransacao(transacao.id).subscribe({
+      next: () => {
+        this.carregarTransacoes();
+      },
+      error: () => {}
+    });
   }
 
-  private atualizarBalance() {
-    this.saveMovimentos();
-    this.balance.setEntrada(this.totalEntradas());
-    this.balance.setSaida(this.totalSaidas());
+  isReceita(tipo: TipoTransacao): boolean {
+    return tipo === 'entrada' || tipo === 'Receita';
   }
 
-  private totalSaidas(): number {
+  carregarTransacoes(): void {
+    this.transacaoService.buscarTodasTransacoes().subscribe({
+      next: (transacoes) => {
+        this.movimentos = transacoes || [];
+        this.atualizarBalance();
+        this.cdr.detectChanges();
+      },
+      error: () => {}
+    });
+  }
+
+  atualizarBalance(): void {
+    this.balance.setEntrada(this.calcularTotal('entrada', 'Receita'));
+    this.balance.setSaida(this.calcularTotal('gasto', 'Despesa'));
+  }
+
+  calcularTotal(tipo1: TipoTransacao, tipo2: TipoTransacao): number {
     return this.movimentos
-      .filter(m => m.tipo === 'gasto')
+      .filter(m => m.tipo === tipo1 || m.tipo === tipo2)
       .reduce((soma, m) => soma + m.valor, 0);
   }
 
-  private totalEntradas(): number {
-    return this.movimentos
-      .filter(m => m.tipo === 'entrada')
-      .reduce((soma, m) => soma + m.valor, 0);
-  }
+  montarTransacao(): Transacao {
+    const { tipo, nome, descricao, valor, data } = this.formTransacao.value;
+    const tipoTransacao: TipoTransacao = tipo === 'gasto' ? 'Despesa' : 'Receita';
 
-  private loadMovimentos() {
-    try {
-      const salvo = localStorage.getItem(this.STORAGE_KEY);
-      return salvo ? JSON.parse(salvo) : [];
-    } catch {
-      return [];
-    }
-  }
-
-  private saveMovimentos(): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.movimentos));
+    return {
+      nome: nome.toUpperCase(),
+      tipo: tipoTransacao,
+      valor: Number(valor),
+      data: data,
+      descricao: descricao || '',
+      usuario: { id: 1 }
+    };
   }
 }

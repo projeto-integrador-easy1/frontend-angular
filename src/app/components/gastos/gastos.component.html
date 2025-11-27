@@ -11,7 +11,7 @@
         <div class="descricao-gasto">{{ g.descricao }}</div>
       </div>
       <div class="acoes-gasto">
-        <div class="valor-gasto" [style.color]="g.tipo === 'entrada' ? '#2bb39a' : '#e24b4b'">{{ g.tipo === 'entrada' ? '+' : '-' }} R$ {{ g.valor.toFixed(2) }}</div>
+        <div class="valor-gasto" [style.color]="isReceita(g.tipo) ? '#2bb39a' : '#e24b4b'">{{ isReceita(g.tipo) ? '+' : '-' }} R$ {{ g.valor.toFixed(2) }}</div>
         <button class="botao-remover" (click)="removerTransacao(i)">X</button>
       </div>
     </div>
@@ -54,6 +54,12 @@
         </div>
         <div *ngIf="formTransacao.get('valor')?.invalid && formTransacao.get('valor')?.touched">
           <small>Valor é obrigatório (mínimo R$ 0,01).</small>
+        </div>
+
+        <label class="label">DATA</label>
+        <input class="campo" type="date" formControlName="data" />
+        <div *ngIf="formTransacao.get('data')?.invalid && formTransacao.get('data')?.touched">
+          <small>Data é obrigatória.</small>
         </div>
 
         <div class="botoes-modal">
