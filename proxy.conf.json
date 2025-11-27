@@ -1,0 +1,8 @@
+{
+  "/usuario": {
+    "target": "https://organic-fortnight-x7w6x4wpqxpcvg5q-8080.app.github.dev",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
