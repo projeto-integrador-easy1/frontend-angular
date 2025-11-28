@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { BalanceService } from '../../services/balance.service';
 import { Transacao, TipoTransacao } from '../../models/transacao.model';
 import { TransacaoService } from '../../services/transacao.service';
+import { UsuarioService } from '../../services/usuario.service';
 
 @Component({
   standalone: true,
@@ -21,7 +22,8 @@ export class GastosComponent implements OnInit {
     private balance: BalanceService,
     private fb: FormBuilder,
     private transacaoService: TransacaoService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private usuarioService: UsuarioService
   ) {}
 
   ngOnInit(): void {
@@ -108,6 +110,7 @@ export class GastosComponent implements OnInit {
   montarTransacao(): Transacao {
     const { tipo, nome, descricao, valor, data } = this.formTransacao.value;
     const tipoTransacao: TipoTransacao = tipo === 'gasto' ? 'Despesa' : 'Receita';
+    const usuarioLogado = this.usuarioService.getUsuarioLogado();
 
     return {
       nome: nome.toUpperCase(),
@@ -115,7 +118,7 @@ export class GastosComponent implements OnInit {
       valor: Number(valor),
       data: data,
       descricao: descricao || '',
-      usuario: { id: 1 }
+      usuario: { id: usuarioLogado?.id || 1 }
     };
   }
 }

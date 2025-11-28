@@ -30,7 +30,6 @@
             class="campo-input" 
             placeholder="Email" 
             formControlName="email"
-            [class.campo-erro]="formLogin.get('email')?.invalid && formLogin.get('email')?.touched"
           />
         </div>
 
@@ -40,12 +39,10 @@
             class="campo-input" 
             placeholder="Senha" 
             formControlName="senha"
-            [class.campo-erro]="formLogin.get('senha')?.invalid && formLogin.get('senha')?.touched"
           />
-        </div>
-
-        <div class="mensagem-erro" *ngIf="mensagemErro">
-          {{ mensagemErro }}
+          <div class="mensagem-erro" *ngIf="mensagemErro">
+            {{ mensagemErro }}
+          </div>
         </div>
 
         <button 

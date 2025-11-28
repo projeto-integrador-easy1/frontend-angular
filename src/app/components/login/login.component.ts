@@ -33,7 +33,7 @@ export class LoginComponent {
 
   entrar(): void {
     if (this.formLogin.invalid) {
-      this.mensagemErro = 'Por favor, preencha todos os campos corretamente.';
+      this.mensagemErro = 'O nome de usuário ou senha que você digitou está incorreto. Tente novamente.';
       return;
     }
 
@@ -47,11 +47,13 @@ export class LoginComponent {
         this.carregando = false;
         if (usuario) {
           this.router.navigate(['/geral']);
+        } else {
+          this.mensagemErro = 'Email ou senha inválidos. Verifique seus dados ou cadastre-se.';
         }
       },
       error: () => {
         this.carregando = false;
-        this.router.navigate(['/geral']);
+        this.mensagemErro = 'Erro ao fazer login. Tente novamente.';
       }
     });
   }

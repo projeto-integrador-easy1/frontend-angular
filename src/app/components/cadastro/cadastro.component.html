@@ -3,9 +3,9 @@
     <div class="conteudo-esquerdo">
       <div class="logo">
         <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="30" cy="20" r="12" stroke="white" stroke-width="3" fill="none"/>
-          <text x="30" y="25" font-size="16" fill="white" text-anchor="middle" font-weight="bold">$</text>
-          <path d="M15 35 Q20 32 30 32 Q40 32 45 35 L42 45 Q35 48 30 48 Q25 48 18 45 Z" fill="white"/>
+          <circle cx="30" cy="20" r="12" stroke="#2bb39a" stroke-width="3" fill="none"/>
+          <text x="30" y="25" font-size="16" fill="#2bb39a" text-anchor="middle" font-weight="bold">$</text>
+          <path d="M15 35 Q20 32 30 32 Q40 32 45 35 L42 45 Q35 48 30 48 Q25 48 18 45 Z" fill="#2bb39a"/>
         </svg>
         <span class="logo-texto">EASY</span>
       </div>
@@ -30,7 +30,6 @@
             class="campo-input" 
             placeholder="Nome completo" 
             formControlName="nome"
-            [class.campo-erro]="formCadastro.get('nome')?.invalid && formCadastro.get('nome')?.touched"
           />
         </div>
 
@@ -40,7 +39,6 @@
             class="campo-input" 
             placeholder="Email" 
             formControlName="email"
-            [class.campo-erro]="formCadastro.get('email')?.invalid && formCadastro.get('email')?.touched"
           />
         </div>
 
@@ -50,16 +48,13 @@
             class="campo-input" 
             placeholder="Senha" 
             formControlName="senha"
-            [class.campo-erro]="formCadastro.get('senha')?.invalid && formCadastro.get('senha')?.touched"
           />
-        </div>
-
-        <div class="mensagem-erro" *ngIf="mensagemErro">
-          {{ mensagemErro }}
-        </div>
-
-        <div class="mensagem-sucesso" *ngIf="mensagemSucesso">
-          {{ mensagemSucesso }}
+          <div class="mensagem-erro" *ngIf="mensagemErro">
+            {{ mensagemErro }}
+          </div>
+          <div class="mensagem-sucesso" *ngIf="mensagemSucesso">
+            {{ mensagemSucesso }}
+          </div>
         </div>
 
         <button 

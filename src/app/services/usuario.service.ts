@@ -16,10 +16,22 @@ export class UsuarioService {
   }
 
   login(email: string, senha: string): Observable<Usuario | null> {
-    const usuario: Usuario = { nome: email.split('@')[0], email, id: Date.now() };
-    this.usuarioLogado = usuario;
-    localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
-    return of(usuario);
+    return this.http.get<Usuario[]>(this.apiUrl).pipe(
+      map((usuarios) => {
+        const usuarioEncontrado = usuarios.find(
+          (u) => u.email === email && u.senha === senha
+        );
+        
+        if (usuarioEncontrado) {
+          this.usuarioLogado = usuarioEncontrado;
+          localStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
+          return usuarioEncontrado;
+        }
+        
+        return null;
+      }),
+      catchError(() => of(null))
+    );
   }
 
   cadastrar(nome: string, email: string, senha: string): Observable<Usuario | null> {
@@ -31,12 +43,7 @@ export class UsuarioService {
         }
         return usuario;
       }),
-      catchError(() => {
-        const usuarioLocal: Usuario = { nome, email, id: Date.now() };
-        this.usuarioLogado = usuarioLocal;
-        localStorage.setItem('usuarioLogado', JSON.stringify(usuarioLocal));
-        return of(usuarioLocal);
-      })
+      catchError(() => of(null))
     );
   }
 
