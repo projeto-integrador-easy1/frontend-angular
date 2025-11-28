@@ -24,7 +24,6 @@ export class UsuarioService {
         
         if (usuarioEncontrado) {
           this.usuarioLogado = usuarioEncontrado;
-          localStorage.setItem('usuarioLogado', JSON.stringify(usuarioEncontrado));
           return usuarioEncontrado;
         }
         
@@ -39,7 +38,6 @@ export class UsuarioService {
       map((usuario) => {
         if (usuario) {
           this.usuarioLogado = usuario;
-          localStorage.setItem('usuarioLogado', JSON.stringify(usuario));
         }
         return usuario;
       }),
@@ -48,18 +46,11 @@ export class UsuarioService {
   }
 
   getUsuarioLogado(): Usuario | null {
-    if (!this.usuarioLogado) {
-      const usuarioStorage = localStorage.getItem('usuarioLogado');
-      if (usuarioStorage) {
-        this.usuarioLogado = JSON.parse(usuarioStorage);
-      }
-    }
     return this.usuarioLogado;
   }
 
   logout(): void {
     this.usuarioLogado = null;
-    localStorage.removeItem('usuarioLogado');
   }
 
   isLogado(): boolean {

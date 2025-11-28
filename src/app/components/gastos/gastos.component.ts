@@ -17,6 +17,7 @@ export class GastosComponent implements OnInit {
   movimentos: Transacao[] = [];
   mostrarModal = false;
   formTransacao!: FormGroup;
+  carregando = true;
 
   constructor(
     private balance: BalanceService,
@@ -86,13 +87,28 @@ export class GastosComponent implements OnInit {
   }
 
   carregarTransacoes(): void {
+    const usuarioLogado = this.usuarioService.getUsuarioLogado();
+    
+    if (!usuarioLogado?.id) {
+      this.movimentos = [];
+      this.carregando = false;
+      return;
+    }
+
+    this.carregando = true;
     this.transacaoService.buscarTodasTransacoes().subscribe({
       next: (transacoes) => {
-        this.movimentos = transacoes || [];
+        // Filtra apenas as transações do usuário logado
+        this.movimentos = (transacoes || []).filter(
+          t => t.usuario?.id === usuarioLogado.id
+        );
         this.atualizarBalance();
+        this.carregando = false;
         this.cdr.detectChanges();
       },
-      error: () => {}
+      error: () => {
+        this.carregando = false;
+      }
     });
   }
 

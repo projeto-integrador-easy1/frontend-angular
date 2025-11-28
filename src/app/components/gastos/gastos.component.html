@@ -1,10 +1,15 @@
 <section class="tela-gastos">
-  <div class="estado-vazio" *ngIf="movimentos.length === 0">
-    Você ainda não possui nenhum gasto cadastrado em nosso sistema.
-    <a href="#" (click)="$event.preventDefault(); abrirModal()">Criar aqui</a>
+  <div class="estado-vazio" *ngIf="carregando">
+    Carregando...
   </div>
 
-  <div class="lista-gastos">
+  <div *ngIf="!carregando">
+    <div class="estado-vazio" *ngIf="movimentos.length === 0">
+      Você ainda não possui nenhum gasto cadastrado em nosso sistema.
+      <a href="#" (click)="$event.preventDefault(); abrirModal()">Criar aqui</a>
+    </div>
+
+    <div class="lista-gastos">
     <div class="linha-gasto" *ngFor="let g of movimentos; let i = index">
       <div class="dados-gasto">
         <div class="titulo-gasto">{{ g.nome }}</div>
@@ -16,8 +21,9 @@
       </div>
     </div>
   </div>
+  </div>
 
-  <button class="botao-adicionar" (click)="abrirModal()">+</button>
+  <button class="botao-adicionar" *ngIf="!carregando" (click)="abrirModal()">+</button>
 
   <!-- modal de criação de gasto -->
    

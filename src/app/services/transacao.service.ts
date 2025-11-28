@@ -23,6 +23,10 @@ export class TransacaoService {
     return this.http.get<Transacao[]>(this.apiUrl, this.httpOptions);
   }
 
+  buscarTransacoesPorUsuario(usuarioId: number): Observable<Transacao[]> {
+    return this.http.get<Transacao[]>(`${this.apiUrl}?usuarioId=${usuarioId}`, this.httpOptions);
+  }
+
   deletarTransacao(id: number): Observable<unknown> {
     return this.http.delete(`${this.apiUrl}/${id}`, this.httpOptions);
   }
