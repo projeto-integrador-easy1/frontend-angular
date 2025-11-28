@@ -1,0 +1,233 @@
+:root {
+  --verde-principal: #2bb39a;
+  --verde-escuro: #3a4f4b;
+  --fundo-cartao: #bfe9df;
+  --branco: #ffffff;
+  --texto-escuro: #264d49;
+  --cinza-claro: #e8e8e8;
+  --sombra: rgba(0, 0, 0, 0.12);
+  --vermelho: #e24b4b;
+  --verde-sucesso: #2bb39a;
+}
+
+.tela-cadastro {
+  display: flex;
+  min-height: 100vh;
+  height: 100vh;
+  background: var(--cinza-claro);
+  margin: 0;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.lado-esquerdo {
+  flex: 1;
+  background: var(--verde-principal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  border-top-right-radius: 80px;
+  position: relative;
+}
+
+.conteudo-esquerdo {
+  max-width: 480px;
+  text-align: center;
+  color: var(--branco);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.logo-texto {
+  font-size: 42px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--branco);
+}
+
+.titulo-boas-vindas {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin: 0 0 24px 0;
+  color: var(--branco);
+}
+
+.subtitulo {
+  font-size: 16px;
+  line-height: 1.6;
+  margin: 0 0 40px 0;
+  color: var(--branco);
+  opacity: 0.95;
+}
+
+.botao-login {
+  background: transparent;
+  color: var(--branco);
+  border: 2px solid var(--branco);
+  padding: 14px 48px;
+  border-radius: 28px;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+.lado-direito {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  background: var(--cinza-claro);
+}
+
+.cartao-cadastro {
+  width: 100%;
+  max-width: 420px;
+  background: var(--branco);
+  border: 3px solid var(--verde-principal);
+  border-radius: 24px;
+  padding: 48px 40px;
+}
+
+.titulo-cadastro {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--texto-escuro);
+  margin: 0 0 36px 0;
+}
+
+.campo-grupo {
+  margin-bottom: 24px;
+}
+
+.campo-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid var(--verde-principal);
+  border-radius: 32px;
+  font-size: 15px;
+  outline: none;
+  background: var(--branco);
+  color: var(--texto-escuro);
+  box-sizing: border-box;
+}
+
+.campo-input::placeholder {
+  color: rgba(38, 77, 73, 0.5);
+}
+
+.campo-input:focus {
+  border-color: var(--verde-escuro);
+}
+
+.campo-input.campo-erro {
+  border-color: var(--vermelho);
+}
+
+.mensagem-erro {
+  background: rgba(226, 75, 75, 0.1);
+  color: var(--vermelho);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 1px solid rgba(226, 75, 75, 0.3);
+}
+
+.mensagem-sucesso {
+  background: rgba(43, 179, 154, 0.1);
+  color: var(--verde-sucesso);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 1px solid rgba(43, 179, 154, 0.3);
+}
+
+.botao-cadastrar {
+  width: 100%;
+  background: var(--verde-principal);
+  color: var(--branco);
+  border: none;
+  padding: 16px;
+  border-radius: 32px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.botao-cadastrar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1024px) {
+  .tela-cadastro {
+    flex-direction: column;
+  }
+
+  .lado-esquerdo {
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 60px;
+    border-bottom-right-radius: 60px;
+    padding: 40px 30px;
+  }
+
+  .lado-direito {
+    padding: 40px 30px;
+  }
+
+  .titulo-boas-vindas {
+    font-size: 26px;
+  }
+
+  .subtitulo {
+    font-size: 15px;
+  }
+
+  .cartao-cadastro {
+    padding: 36px 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .logo-texto {
+    font-size: 32px;
+  }
+
+  .titulo-boas-vindas {
+    font-size: 22px;
+  }
+
+  .subtitulo {
+    font-size: 14px;
+  }
+
+  .cartao-cadastro {
+    padding: 28px 24px;
+  }
+
+  .titulo-cadastro {
+    font-size: 24px;
+  }
+}

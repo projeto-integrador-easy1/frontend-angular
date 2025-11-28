@@ -173,7 +173,7 @@
   }
 </style>
 
-<app-header></app-header>
-<main class="conteudo-app">
+<app-header *ngIf="!isLoginRoute()"></app-header>
+<main class="conteudo-app" [class.login-page]="isLoginRoute()">
   <router-outlet></router-outlet>
 </main>

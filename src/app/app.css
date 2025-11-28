@@ -1,0 +1,8 @@
+.conteudo-app {
+  min-height: 100vh;
+}
+
+.conteudo-app.login-page {
+  padding: 0;
+  margin: 0;
+}

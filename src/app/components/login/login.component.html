@@ -1,0 +1,65 @@
+<section class="tela-login">
+  <div class="lado-esquerdo">
+    <div class="conteudo-esquerdo">
+      <div class="logo">
+        <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="20" r="12" stroke="white" stroke-width="3" fill="none"/>
+          <text x="30" y="25" font-size="16" fill="white" text-anchor="middle" font-weight="bold">$</text>
+          <path d="M15 35 Q20 32 30 32 Q40 32 45 35 L42 45 Q35 48 30 48 Q25 48 18 45 Z" fill="white"/>
+        </svg>
+        <span class="logo-texto">EASY</span>
+      </div>
+      
+      <h1 class="titulo-boas-vindas">SEJA BEM VINDO!</h1>
+      <p class="subtitulo">
+        Transforme seus sonhos em realidade financeira: comece hoje a construir um futuro mais seguro e próspero!
+      </p>
+      
+      <button class="botao-cadastro" (click)="irParaCadastro()">Cadastre-se</button>
+    </div>
+  </div>
+
+  <div class="lado-direito">
+    <div class="cartao-login">
+      <h2 class="titulo-login">LOGIN</h2>
+      
+      <form [formGroup]="formLogin" (ngSubmit)="entrar()">
+        <div class="campo-grupo">
+          <input 
+            type="email" 
+            class="campo-input" 
+            placeholder="Email" 
+            formControlName="email"
+            [class.campo-erro]="formLogin.get('email')?.invalid && formLogin.get('email')?.touched"
+          />
+        </div>
+
+        <div class="campo-grupo">
+          <input 
+            type="password" 
+            class="campo-input" 
+            placeholder="Senha" 
+            formControlName="senha"
+            [class.campo-erro]="formLogin.get('senha')?.invalid && formLogin.get('senha')?.touched"
+          />
+        </div>
+
+        <div class="mensagem-erro" *ngIf="mensagemErro">
+          {{ mensagemErro }}
+        </div>
+
+        <button 
+          type="submit" 
+          class="botao-entrar"
+          [disabled]="carregando"
+        >
+          {{ carregando ? 'ENTRANDO...' : 'ENTRAR' }}
+        </button>
+
+        <a href="#" class="link-esqueci-senha" (click)="$event.preventDefault()">
+          Esqueci a senha
+        </a>
+      </form>
+    </div>
+  </div>
+</section>
