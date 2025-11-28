@@ -23,8 +23,8 @@ export class GastosComponent implements OnInit {
     private balance: BalanceService,
     private fb: FormBuilder,
     private transacaoService: TransacaoService,
-    private cdr: ChangeDetectorRef,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -42,42 +42,48 @@ export class GastosComponent implements OnInit {
   }
 
   inicializarFormulario(): void {
-    const dataAtual = new Date().toISOString().split('T')[0];
     this.formTransacao = this.fb.group({
       tipo: ['gasto', Validators.required],
       nome: ['', [Validators.required, Validators.minLength(3)]],
       descricao: [''],
       valor: [null, [Validators.required, Validators.min(0.01)]],
-      data: [dataAtual, Validators.required]
+      data: [new Date().toISOString().split('T')[0], Validators.required]
     });
   }
 
   criarTransacao(): void {
-    if (this.formTransacao.invalid) {
-      return;
-    }
+    if (this.formTransacao.invalid) return;
 
-    const transacao = this.montarTransacao();
+    const { tipo, nome, descricao, valor, data } = this.formTransacao.value;
+    const usuarioId = this.usuarioService.usuarioLogado?.id || 1;
+    
+    const transacao: Transacao = {
+      nome: nome.toUpperCase(),
+      tipo: tipo === 'gasto' ? 'Despesa' : 'Receita',
+      valor: Number(valor),
+      data,
+      descricao: descricao || '',
+      usuario: { id: usuarioId }
+    };
 
-    this.transacaoService.criarTransacao(transacao).subscribe({
+    this.transacaoService.criar(transacao).subscribe({
       next: () => {
         this.mostrarModal = false;
         this.carregarTransacoes();
       },
-      error: () => {}
+      error: (err) => {
+        console.error('Erro ao criar transação:', err);
+        this.mostrarModal = false;
+      }
     });
   }
 
   removerTransacao(index: number): void {
-    const transacao = this.movimentos[index];
-    if (!transacao.id) {
-      return;
-    }
+    const id = this.movimentos[index]?.id;
+    if (!id) return;
 
-    this.transacaoService.deletarTransacao(transacao.id).subscribe({
-      next: () => {
-        this.carregarTransacoes();
-      },
+    this.transacaoService.deletar(id).subscribe({
+      next: () => this.carregarTransacoes(),
       error: () => {}
     });
   }
@@ -87,54 +93,39 @@ export class GastosComponent implements OnInit {
   }
 
   carregarTransacoes(): void {
-    const usuarioLogado = this.usuarioService.getUsuarioLogado();
-    
-    if (!usuarioLogado?.id) {
-      this.movimentos = [];
-      this.carregando = false;
-      return;
-    }
-
+    console.log('Iniciando carregamento de transações...');
     this.carregando = true;
-    this.transacaoService.buscarTodasTransacoes().subscribe({
+    this.cdr.detectChanges();
+    
+    const usuarioId = this.usuarioService.usuarioLogado?.id;
+    console.log('Usuario logado ID:', usuarioId);
+
+    this.transacaoService.buscarTodas().subscribe({
       next: (transacoes) => {
-        // Filtra apenas as transações do usuário logado
-        this.movimentos = (transacoes || []).filter(
-          t => t.usuario?.id === usuarioLogado.id
-        );
+        console.log('Transações recebidas:', transacoes);
+        // Se houver usuário logado, filtra por ele, senão mostra todas
+        this.movimentos = usuarioId 
+          ? (transacoes || []).filter(t => t.usuario?.id === usuarioId)
+          : (transacoes || []);
+        console.log('Movimentos filtrados:', this.movimentos);
         this.atualizarBalance();
         this.carregando = false;
         this.cdr.detectChanges();
+        console.log('Carregamento finalizado, carregando =', this.carregando);
       },
-      error: () => {
+      error: (err) => {
+        console.error('Erro ao carregar transações:', err);
+        this.movimentos = [];
         this.carregando = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
   atualizarBalance(): void {
-    this.balance.setEntrada(this.calcularTotal('entrada', 'Receita'));
-    this.balance.setSaida(this.calcularTotal('gasto', 'Despesa'));
-  }
-
-  calcularTotal(tipo1: TipoTransacao, tipo2: TipoTransacao): number {
-    return this.movimentos
-      .filter(m => m.tipo === tipo1 || m.tipo === tipo2)
-      .reduce((soma, m) => soma + m.valor, 0);
-  }
-
-  montarTransacao(): Transacao {
-    const { tipo, nome, descricao, valor, data } = this.formTransacao.value;
-    const tipoTransacao: TipoTransacao = tipo === 'gasto' ? 'Despesa' : 'Receita';
-    const usuarioLogado = this.usuarioService.getUsuarioLogado();
-
-    return {
-      nome: nome.toUpperCase(),
-      tipo: tipoTransacao,
-      valor: Number(valor),
-      data: data,
-      descricao: descricao || '',
-      usuario: { id: usuarioLogado?.id || 1 }
-    };
+    const entradas = this.movimentos.filter(m => this.isReceita(m.tipo)).reduce((s, m) => s + m.valor, 0);
+    const saidas = this.movimentos.filter(m => !this.isReceita(m.tipo)).reduce((s, m) => s + m.valor, 0);
+    this.balance.setEntrada(entradas);
+    this.balance.setSaida(saidas);
   }
 }

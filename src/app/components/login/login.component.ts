@@ -12,19 +12,11 @@ import { UsuarioService } from '../../services/usuario.service';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  formLogin!: FormGroup;
+  formLogin: FormGroup;
   mensagemErro = '';
   carregando = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private usuarioService: UsuarioService,
-    private router: Router
-  ) {
-    this.inicializarFormulario();
-  }
-
-  inicializarFormulario(): void {
+  constructor(private fb: FormBuilder, private usuarioService: UsuarioService, private router: Router) {
     this.formLogin = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(6)]]
@@ -33,13 +25,12 @@ export class LoginComponent {
 
   entrar(): void {
     if (this.formLogin.invalid) {
-      this.mensagemErro = 'O nome de usuário ou senha que você digitou está incorreto. Tente novamente.';
+      this.mensagemErro = 'Preencha todos os campos corretamente.';
       return;
     }
 
     this.carregando = true;
     this.mensagemErro = '';
-
     const { email, senha } = this.formLogin.value;
 
     this.usuarioService.login(email, senha).subscribe({
@@ -48,12 +39,12 @@ export class LoginComponent {
         if (usuario) {
           this.router.navigate(['/geral']);
         } else {
-          this.mensagemErro = 'Email ou senha inválidos. Verifique seus dados ou cadastre-se.';
+          this.mensagemErro = 'Email ou senha inválidos.';
         }
       },
       error: () => {
         this.carregando = false;
-        this.mensagemErro = 'Erro ao fazer login. Tente novamente.';
+        this.mensagemErro = 'Erro ao fazer login.';
       }
     });
   }

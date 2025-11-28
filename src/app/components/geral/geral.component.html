@@ -5,7 +5,7 @@
         <div class="cartao-titulo">ENTRADA</div>
         <div class="cartao-corpo">
           <div class="valor">R$ {{ entrada.toFixed(2) }}</div>
-          <div class="acao" [class.ativo]="rotaAtiva === 'gastos'" (click)="navegar('gastos')">
+          <div class="acao" [class.ativo]="nav.rotaAtiva === 'gastos'" (click)="navegar('gastos')">
             ADICIONAR ENTRADA
           </div>
         </div>
@@ -15,7 +15,7 @@
         <div class="cartao-titulo">SAÍDA</div>
         <div class="cartao-corpo">
           <div class="valor">R$ {{ saida.toFixed(2) }}</div>
-          <div class="acao" [class.ativo]="rotaAtiva === 'gastos'" (click)="navegar('gastos')">
+          <div class="acao" [class.ativo]="nav.rotaAtiva === 'gastos'" (click)="navegar('gastos')">
             ADICIONAR SAÍDA
           </div>
         </div>

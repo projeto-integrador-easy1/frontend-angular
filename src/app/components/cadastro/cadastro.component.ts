@@ -12,20 +12,12 @@ import { UsuarioService } from '../../services/usuario.service';
   styleUrls: ['./cadastro.component.css']
 })
 export class CadastroComponent {
-  formCadastro!: FormGroup;
+  formCadastro: FormGroup;
   mensagemErro = '';
   mensagemSucesso = '';
   carregando = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private usuarioService: UsuarioService,
-    private router: Router
-  ) {
-    this.inicializarFormulario();
-  }
-
-  inicializarFormulario(): void {
+  constructor(private fb: FormBuilder, private usuarioService: UsuarioService, private router: Router) {
     this.formCadastro = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
@@ -35,31 +27,28 @@ export class CadastroComponent {
 
   cadastrar(): void {
     if (this.formCadastro.invalid) {
-      this.mensagemErro = 'Por favor, preencha todos os campos corretamente.';
+      this.mensagemErro = 'Preencha todos os campos corretamente.';
       return;
     }
 
     this.carregando = true;
     this.mensagemErro = '';
     this.mensagemSucesso = '';
-
     const { nome, email, senha } = this.formCadastro.value;
 
     this.usuarioService.cadastrar(nome, email, senha).subscribe({
       next: (usuario) => {
         this.carregando = false;
         if (usuario) {
-          this.mensagemSucesso = 'Cadastro realizado com sucesso!';
-          setTimeout(() => {
-            this.router.navigate(['/geral']);
-          }, 1000);
+          this.mensagemSucesso = 'Cadastro realizado!';
+          setTimeout(() => this.router.navigate(['/geral']), 1000);
         } else {
-          this.mensagemErro = 'Erro ao cadastrar. Tente novamente.';
+          this.mensagemErro = 'Erro ao cadastrar.';
         }
       },
       error: () => {
         this.carregando = false;
-        this.mensagemErro = 'Erro ao cadastrar. Tente novamente.';
+        this.mensagemErro = 'Erro ao cadastrar.';
       }
     });
   }

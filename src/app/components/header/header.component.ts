@@ -9,19 +9,14 @@ import { UsuarioService } from '../../services/usuario.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  
   constructor(
     private router: Router,
-    public navigationService: NavigationService,
+    public nav: NavigationService,
     private usuarioService: UsuarioService
   ) {}
 
-  get rotaAtiva() {
-    return this.navigationService.rotaAtiva;
-  }
-
   navegar(rota: string) {
-    this.navigationService.setRotaAtiva(rota);
+    this.nav.setRotaAtiva(rota);
     this.router.navigate([rota]);
   }
 

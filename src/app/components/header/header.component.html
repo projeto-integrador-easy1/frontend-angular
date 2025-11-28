@@ -1,11 +1,11 @@
 <header class="cabecalho">
   <div class="marca">EASY</div>
   <nav class="menu-superior">
-    <button class="botao-aba" [class.ativo]="rotaAtiva === 'geral'" (click)="navegar('geral')">Geral</button>
-    <button class="botao-aba" [class.ativo]="rotaAtiva === 'saldo'" (click)="navegar('saldo')">Saldo</button>
-    <button class="botao-aba" [class.ativo]="rotaAtiva === 'gastos'" (click)="navegar('gastos')">Entradas/Gastos</button>
-    <button class="botao-aba" [class.ativo]="rotaAtiva === 'investimentos'" (click)="navegar('investimentos')">Investimentos</button>
-    <button class="botao-aba" [class.ativo]="rotaAtiva === 'calendario'" (click)="navegar('calendario')">Calendário</button>
+    <button class="botao-aba" [class.ativo]="nav.rotaAtiva === 'geral'" (click)="navegar('geral')">Geral</button>
+    <button class="botao-aba" [class.ativo]="nav.rotaAtiva === 'saldo'" (click)="navegar('saldo')">Saldo</button>
+    <button class="botao-aba" [class.ativo]="nav.rotaAtiva === 'gastos'" (click)="navegar('gastos')">Entradas/Gastos</button>
+    <button class="botao-aba" [class.ativo]="nav.rotaAtiva === 'investimentos'" (click)="navegar('investimentos')">Investimentos</button>
+    <button class="botao-aba" [class.ativo]="nav.rotaAtiva === 'calendario'" (click)="navegar('calendario')">Calendário</button>
   </nav>
   <button class="botao-logout" (click)="logout()">Sair</button>
 </header>
