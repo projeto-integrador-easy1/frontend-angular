@@ -22,26 +22,39 @@ export class GeralComponent implements OnInit, OnDestroy {
     private balance: BalanceService,
     private router: Router,
     public nav: NavigationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.inicializarValores();
+    this.inscreverMudancasBalance();
+  }
+
+  private inicializarValores(): void {
     this.entrada = this.balance.getEntrada();
     this.saida = this.balance.getSaida();
-    this.saldo = this.entrada - this.saida;
+    this.calcularSaldo();
+  }
 
+  private inscreverMudancasBalance(): void {
     this.balanceSub = new Subscription();
+
     this.balanceSub.add(
-      this.balance.entrada$.subscribe((entrada) => {
-        this.entrada = entrada;
-        this.saldo = this.entrada - this.saida;
+      this.balance.entrada$.subscribe((valor) => {
+        this.entrada = valor;
+        this.calcularSaldo();
       })
     );
+
     this.balanceSub.add(
-      this.balance.saida$.subscribe((saida) => {
-        this.saida = saida;
-        this.saldo = this.entrada - this.saida;
+      this.balance.saida$.subscribe((valor) => {
+        this.saida = valor;
+        this.calcularSaldo();
       })
     );
+  }
+
+  private calcularSaldo(): void {
+    this.saldo = this.entrada - this.saida;
   }
 
   navegar(rota: string) {

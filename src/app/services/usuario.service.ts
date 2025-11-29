@@ -9,7 +9,7 @@ export class UsuarioService {
   private apiUrl = '/usuario';
   usuarioLogado: Usuario | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(email: string, senha: string): Observable<Usuario | null> {
     return this.http.get<Usuario[]>(this.apiUrl).pipe(

@@ -26,15 +26,17 @@ export class GastosComponent implements OnInit {
     private transacaoService: TransacaoService,
     private usuarioService: UsuarioService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.inicializarFormulario();
     this.carregarTransacoes();
   }
 
+  // --- Gestão do Modal e Formulário ---
+
   abrirModal(): void {
-    this.transacaoEditando = null;
+    this.transacaoEditando = null; // Garante que estamos no modo de criação
     this.inicializarFormulario();
     this.mostrarModal = true;
   }
@@ -43,8 +45,9 @@ export class GastosComponent implements OnInit {
     this.transacaoEditando = this.movimentos[index];
     if (!this.transacaoEditando) return;
 
+    // Preenche o formulário com os dados da transação existente
     const tipoForm = this.transacaoEditando.tipo === 'Despesa' ? 'gasto' : 'entrada';
-    
+
     this.formTransacao = this.fb.group({
       tipo: [tipoForm, Validators.required],
       nome: [this.transacaoEditando.nome, [Validators.required, Validators.minLength(3)]],
@@ -52,7 +55,7 @@ export class GastosComponent implements OnInit {
       valor: [this.transacaoEditando.valor, [Validators.required, Validators.min(0.01)]],
       data: [this.transacaoEditando.data, Validators.required]
     });
-    
+
     this.mostrarModal = true;
   }
 
@@ -62,6 +65,7 @@ export class GastosComponent implements OnInit {
   }
 
   inicializarFormulario(): void {
+    // Define os campos e validações do formulário
     this.formTransacao = this.fb.group({
       tipo: ['gasto', Validators.required],
       nome: ['', [Validators.required, Validators.minLength(3)]],
@@ -71,13 +75,28 @@ export class GastosComponent implements OnInit {
     });
   }
 
-  criarTransacao(): void {
+  // --- Lógica de Salvar (Criar ou Editar) ---
+
+  salvarTransacao(): void {
+    // Se o formulário estiver inválido (ex: campos vazios), não faz nada
     if (this.formTransacao.invalid) return;
 
+    const transacaoParaSalvar = this.montarObjetoTransacao();
+
+    if (this.transacaoEditando) {
+      this.atualizarTransacaoExistente(this.transacaoEditando.id!, transacaoParaSalvar);
+    } else {
+      this.criarNovaTransacao(transacaoParaSalvar);
+    }
+  }
+
+  // Cria o objeto Transacao a partir dos dados do formulário
+  private montarObjetoTransacao(): Transacao {
     const { tipo, nome, descricao, valor, data } = this.formTransacao.value;
+    // Usa o ID do usuário logado ou 1 como padrão
     const usuarioId = this.usuarioService.usuarioLogado?.id || 1;
-    
-    const transacao: Transacao = {
+
+    return {
       nome: nome.toUpperCase(),
       tipo: tipo === 'gasto' ? 'Despesa' : 'Receita',
       valor: Number(valor),
@@ -85,37 +104,40 @@ export class GastosComponent implements OnInit {
       descricao: descricao || '',
       usuario: { id: usuarioId }
     };
-
-    if (this.transacaoEditando?.id) {
-      const idEditando = this.transacaoEditando.id;
-      this.transacaoService.atualizar(idEditando, transacao).subscribe({
-        next: () => {
-          const index = this.movimentos.findIndex(t => t.id === idEditando);
-          if (index !== -1) {
-            this.movimentos[index] = { ...transacao, id: idEditando };
-          }
-          this.atualizarBalance();
-          this.fecharModal();
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.fecharModal();
-        }
-      });
-    } else {
-      this.transacaoService.criar(transacao).subscribe({
-        next: (novaTransacao) => {
-          this.movimentos.push(novaTransacao);
-          this.atualizarBalance();
-          this.fecharModal();
-          this.cdr.detectChanges();
-        },
-        error: () => {
-          this.fecharModal();
-        }
-      });
-    }
   }
+
+  private criarNovaTransacao(transacao: Transacao): void {
+    this.transacaoService.criar(transacao).subscribe({
+      next: (novaTransacao) => {
+        this.movimentos.push(novaTransacao); // Adiciona na lista local
+        this.finalizarOperacao();
+      },
+      error: () => this.fecharModal()
+    });
+  }
+
+  private atualizarTransacaoExistente(id: number, transacao: Transacao): void {
+    this.transacaoService.atualizar(id, transacao).subscribe({
+      next: () => {
+        // Encontra e atualiza a transação na lista local
+        const index = this.movimentos.findIndex(t => t.id === id);
+        if (index !== -1) {
+          this.movimentos[index] = { ...transacao, id: id };
+        }
+        this.finalizarOperacao();
+      },
+      error: () => this.fecharModal()
+    });
+  }
+
+  // Atualiza a tela e fecha o modal após sucesso
+  private finalizarOperacao(): void {
+    this.atualizarBalance();
+    this.fecharModal();
+    this.cdr.detectChanges(); // Força a atualização da tela
+  }
+
+  // --- Outras Operações ---
 
   removerTransacao(index: number): void {
     const id = this.movimentos[index]?.id;
@@ -123,30 +145,27 @@ export class GastosComponent implements OnInit {
 
     this.transacaoService.deletar(id).subscribe({
       next: () => {
-        // Remover localmente de forma otimista
-        this.movimentos.splice(index, 1);
+        this.movimentos.splice(index, 1); // Remove da lista visualmente
         this.atualizarBalance();
         this.cdr.detectChanges();
       },
-      error: () => {}
+      error: () => console.error('Erro ao deletar')
     });
-  }
-
-  isReceita(tipo: TipoTransacao): boolean {
-    return tipo === 'entrada' || tipo === 'Receita';
   }
 
   carregarTransacoes(): void {
     this.carregando = true;
-    this.cdr.detectChanges();
-    
     const usuarioId = this.usuarioService.usuarioLogado?.id;
 
     this.transacaoService.buscarTodas().subscribe({
       next: (transacoes) => {
-        this.movimentos = usuarioId 
-          ? (transacoes || []).filter(t => t.usuario?.id === usuarioId)
-          : (transacoes || []);
+        // Filtra as transações apenas do usuário logado
+        if (usuarioId) {
+          this.movimentos = (transacoes || []).filter(t => t.usuario?.id === usuarioId);
+        } else {
+          this.movimentos = transacoes || [];
+        }
+
         this.atualizarBalance();
         this.carregando = false;
         this.cdr.detectChanges();
@@ -159,10 +178,23 @@ export class GastosComponent implements OnInit {
     });
   }
 
+  // Recalcula o total de entradas e saídas
   atualizarBalance(): void {
-    const entradas = this.movimentos.filter(m => this.isReceita(m.tipo)).reduce((s, m) => s + m.valor, 0);
-    const saidas = this.movimentos.filter(m => !this.isReceita(m.tipo)).reduce((s, m) => s + m.valor, 0);
+    const entradas = this.calcularTotalPorTipo(true);
+    const saídas = this.calcularTotalPorTipo(false);
+
     this.balance.setEntrada(entradas);
-    this.balance.setSaida(saidas);
+    this.balance.setSaida(saídas);
+  }
+
+  // Função auxiliar para somar valores (simplifica o reduce)
+  private calcularTotalPorTipo(ehReceita: boolean): number {
+    return this.movimentos
+      .filter(m => this.isReceita(m.tipo) === ehReceita)
+      .reduce((total, m) => total + m.valor, 0);
+  }
+
+  isReceita(tipo: TipoTransacao): boolean {
+    return tipo === 'entrada' || tipo === 'Receita';
   }
 }
