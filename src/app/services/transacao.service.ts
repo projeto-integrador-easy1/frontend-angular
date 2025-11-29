@@ -20,5 +20,9 @@ export class TransacaoService {
   deletar(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  atualizar(id: number, transacao: Transacao): Observable<Transacao> {
+    return this.http.put<Transacao>(`${this.apiUrl}/${id}`, transacao);
+  }
 }
 

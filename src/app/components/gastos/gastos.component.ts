@@ -18,6 +18,7 @@ export class GastosComponent implements OnInit {
   mostrarModal = false;
   formTransacao!: FormGroup;
   carregando = true;
+  transacaoEditando: Transacao | null = null;
 
   constructor(
     private balance: BalanceService,
@@ -33,12 +34,31 @@ export class GastosComponent implements OnInit {
   }
 
   abrirModal(): void {
+    this.transacaoEditando = null;
     this.inicializarFormulario();
+    this.mostrarModal = true;
+  }
+
+  abrirModalEdicao(index: number): void {
+    this.transacaoEditando = this.movimentos[index];
+    if (!this.transacaoEditando) return;
+
+    const tipoForm = this.transacaoEditando.tipo === 'Despesa' ? 'gasto' : 'entrada';
+    
+    this.formTransacao = this.fb.group({
+      tipo: [tipoForm, Validators.required],
+      nome: [this.transacaoEditando.nome, [Validators.required, Validators.minLength(3)]],
+      descricao: [this.transacaoEditando.descricao || ''],
+      valor: [this.transacaoEditando.valor, [Validators.required, Validators.min(0.01)]],
+      data: [this.transacaoEditando.data, Validators.required]
+    });
+    
     this.mostrarModal = true;
   }
 
   fecharModal(): void {
     this.mostrarModal = false;
+    this.transacaoEditando = null;
   }
 
   inicializarFormulario(): void {
@@ -66,16 +86,35 @@ export class GastosComponent implements OnInit {
       usuario: { id: usuarioId }
     };
 
-    this.transacaoService.criar(transacao).subscribe({
-      next: () => {
-        this.mostrarModal = false;
-        this.carregarTransacoes();
-      },
-      error: (err) => {
-        console.error('Erro ao criar transação:', err);
-        this.mostrarModal = false;
-      }
-    });
+    if (this.transacaoEditando?.id) {
+      const idEditando = this.transacaoEditando.id;
+      this.transacaoService.atualizar(idEditando, transacao).subscribe({
+        next: () => {
+          const index = this.movimentos.findIndex(t => t.id === idEditando);
+          if (index !== -1) {
+            this.movimentos[index] = { ...transacao, id: idEditando };
+          }
+          this.atualizarBalance();
+          this.fecharModal();
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.fecharModal();
+        }
+      });
+    } else {
+      this.transacaoService.criar(transacao).subscribe({
+        next: (novaTransacao) => {
+          this.movimentos.push(novaTransacao);
+          this.atualizarBalance();
+          this.fecharModal();
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.fecharModal();
+        }
+      });
+    }
   }
 
   removerTransacao(index: number): void {
@@ -83,7 +122,12 @@ export class GastosComponent implements OnInit {
     if (!id) return;
 
     this.transacaoService.deletar(id).subscribe({
-      next: () => this.carregarTransacoes(),
+      next: () => {
+        // Remover localmente de forma otimista
+        this.movimentos.splice(index, 1);
+        this.atualizarBalance();
+        this.cdr.detectChanges();
+      },
       error: () => {}
     });
   }
@@ -93,28 +137,21 @@ export class GastosComponent implements OnInit {
   }
 
   carregarTransacoes(): void {
-    console.log('Iniciando carregamento de transações...');
     this.carregando = true;
     this.cdr.detectChanges();
     
     const usuarioId = this.usuarioService.usuarioLogado?.id;
-    console.log('Usuario logado ID:', usuarioId);
 
     this.transacaoService.buscarTodas().subscribe({
       next: (transacoes) => {
-        console.log('Transações recebidas:', transacoes);
-        // Se houver usuário logado, filtra por ele, senão mostra todas
         this.movimentos = usuarioId 
           ? (transacoes || []).filter(t => t.usuario?.id === usuarioId)
           : (transacoes || []);
-        console.log('Movimentos filtrados:', this.movimentos);
         this.atualizarBalance();
         this.carregando = false;
         this.cdr.detectChanges();
-        console.log('Carregamento finalizado, carregando =', this.carregando);
       },
-      error: (err) => {
-        console.error('Erro ao carregar transações:', err);
+      error: () => {
         this.movimentos = [];
         this.carregando = false;
         this.cdr.detectChanges();

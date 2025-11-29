@@ -17,7 +17,11 @@
       </div>
       <div class="acoes-gasto">
         <div class="valor-gasto" [style.color]="isReceita(g.tipo) ? '#2bb39a' : '#e24b4b'">{{ isReceita(g.tipo) ? '+' : '-' }} R$ {{ g.valor.toFixed(2) }}</div>
-        <button class="botao-remover" (click)="removerTransacao(i)">X</button>
+        <svg class="icone-editar" (click)="abrirModalEdicao(i)" title="Editar transação" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+        <span class="icone-remover" (click)="removerTransacao(i)" title="Excluir transação">X</span>
       </div>
     </div>
   </div>
@@ -30,7 +34,7 @@
   <div class="modal-fundo" *ngIf="mostrarModal" role="dialog" aria-modal="true" aria-label="Criar novo gasto">
     <div class="modal-caixa">
       <header class="modal-cabecalho">
-        <h3 class="titulo-modal">NOVA TRANSAÇÃO</h3>
+        <h3 class="titulo-modal">{{ transacaoEditando ? 'EDITAR TRANSAÇÃO' : 'NOVA TRANSAÇÃO' }}</h3>
         <button class="fechar-modal" (click)="fecharModal()" aria-label="Fechar modal">&times;</button>
       </header>
 
@@ -69,7 +73,7 @@
         </div>
 
         <div class="botoes-modal">
-          <button type="submit" class="botao-criar" [disabled]="formTransacao.invalid">CRIAR</button>
+          <button type="submit" class="botao-criar" [disabled]="formTransacao.invalid">{{ transacaoEditando ? 'SALVAR' : 'CRIAR' }}</button>
           <button type="button" class="botao-fechar" (click)="fecharModal()">CANCELAR</button>
         </div>
       </form>
